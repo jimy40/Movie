@@ -1,12 +1,16 @@
-import java.util.Properties  
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
-
+import java.util.Properties
+val keystoreProperties = Properties().apply {
+    val keystoreFile = rootProject.file("key.properties")
+    if (keystoreFile.exists()) {
+        keystoreFile.inputStream().use { load(it) }
+    }
+}
 android {
     namespace = "com.example.movie_v2_clean_arch"
     compileSdk = flutter.compileSdkVersion
@@ -22,34 +26,30 @@ android {
     }
 
     defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.movie_v2_clean_arch"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
-    // Load the keystore properties from the key.properties file
-    val keystorePropertiesFile = rootProject.file("key.properties")
-    val keystoreProperties = Properties()  
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(keystorePropertiesFile.inputStream())  
-    }
-
-    signingConfigs {
+     signingConfigs {
         create("release") {
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
+            keyAlias = keystoreProperties["keyAlias"] as String?
+            keyPassword = keystoreProperties["keyPassword"] as String?
+            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+            storePassword = keystoreProperties["storePassword"] as String?
         }
     }
 
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
-            isShrinkResources = true
-            isMinifyEnabled = true
+            isMinifyEnabled = true        // Required
+            isShrinkResources = true   
         }
     }
 }

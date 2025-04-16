@@ -1,0 +1,4 @@
+#Wed Apr 16 23:18:57 EET 2025
+base.0=D\:\\movie_clean_arch_v2-main\\build\\app\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
